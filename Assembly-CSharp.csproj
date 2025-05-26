@@ -1,0 +1,138 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <LangVersion>9.0</LangVersion>
+    <_TargetFrameworkDirectories>non_empty_path_generated_by_unity.rider.package</_TargetFrameworkDirectories>
+    <_FullFrameworkReferenceAssemblyPaths>non_empty_path_generated_by_unity.rider.package</_FullFrameworkReferenceAssemblyPaths>
+    <DisableHandlePackageFileConflicts>true</DisableHandlePackageFileConflicts>
+  </PropertyGroup>
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>10.0.20506</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <RootNamespace></RootNamespace>
+    <ProjectGuid>{b327b0f7-3989-218c-73d4-b9f67962705a}</ProjectGuid>
+    <ProjectTypeGuids>{E097FAD1-6243-4DAD-9C02-E9B9EFC3FFC1};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <AssemblyName>Assembly-CSharp</AssemblyName>
+    <TargetFrameworkVersion>v4.7.1</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <BaseDirectory>.</BaseDirectory>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>Temp\Bin\Debug\Unity.Rider.Editor\</OutputPath>
+    <DefineConstants>UNITY_EDITOR</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <NoWarn>0169,0649</NoWarn>
+    <AllowUnsafeBlocks>False</AllowUnsafeBlocks>
+    <TreatWarningsAsErrors>False</TreatWarningsAsErrors>
+  </PropertyGroup>
+  <PropertyGroup>
+    <NoConfig>true</NoConfig>
+    <NoStdLib>true</NoStdLib>
+    <AddAdditionalExplicitAssemblyReferences>false</AddAdditionalExplicitAssemblyReferences>
+    <ImplicitlyExpandNETStandardFacades>false</ImplicitlyExpandNETStandardFacades>
+    <ImplicitlyExpandDesignTimeFacades>false</ImplicitlyExpandDesignTimeFacades>
+  </PropertyGroup>
+  <ItemGroup>
+    <None Include="Library\PackageCache\com.unity.render-pipelines.universal\package.json" />
+    <None Include="Library\PackageCache\com.unity.modules.jsonserialize\package.json" />
+    <None Include="Library\PackageCache\com.unity.burst\package.json" />
+    <None Include="Library\PackageCache\com.unity.modules.screencapture\package.json" />
+    <None Include="Library\PackageCache\com.unity.modules.cloth\package.json" />
+    <None Include="Library\PackageCache\com.unity.test-framework.performance\package.json" />
+    <None Include="Library\PackageCache\com.unity.modules.unitywebrequesttexture\package.json" />
+    <None Include="Library\PackageCache\com.unity.modules.ai\package.json" />
+    <None Include="Library\PackageCache\com.unity.collections\Unity.Collections.LowLevel.ILSupport\README.txt" />
+    <None Include="Library\PackageCache\com.unity.ugui\package.json" />
+    <None Include="Library\PackageCache\com.unity.ext.nunit\package.json" />
+    <None Include="Library\PackageCache\com.unity.render-pipelines.universal-config\package.json" />
+    <None Include="Library\PackageCache\com.unity.modules.assetbundle\package.json" />
+    <None Include="Library\PackageCache\com.unity.render-pipelines.core\Shaders\CoreCopy.shader" />
+    <None Include="Library\PackageCache\com.unity.modules.imgui\package.json" />
+    <None Include="Library\PackageCache\com.unity.modules.tilemap\package.json" />
+    <None Include="Library\PackageCache\com.unity.test-framework.performance\ValidationExceptions.json" />
+    <None Include="Library\PackageCache\com.unity.timeline\package.json" />
+    <None Include="Library\PackageCache\com.unity.modules.accessibility\package.json" />
+    <None Include="Library\PackageCache\com.unity.ide.visualstudio\ValidationConfig.json" />
+    <None Include="Library\PackageCache\com.unity.modules.terrainphysics\package.json" />
+    <None Include="Library\PackageCache\com.unity.mathematics\package.json" />
+    <None Include="Library\PackageCache\com.unity.burst\ValidationExceptions.json" />
+    <None Include="Packages\com.halodi.halodi-unity-package-registry-manager\package.json" />
+    <None Include="Library\PackageCache\com.unity.ugui\PackageConversionData.json" />
+    <None Include="Library\PackageCache\com.unity.modules.unitywebrequestassetbundle\package.json" />
+    <None Include="Library\PackageCache\com.unity.ide.visualstudio\package.json" />
+    <None Include="Library\PackageCache\com.unity.render-pipelines.core\ValidationConfig.json" />
+    <None Include="Library\PackageCache\com.unity.render-pipelines.core\package.json" />
+    <None Include="Library\PackageCache\com.unity.modules.imageconversion\package.json" />
+    <None Include="Library\PackageCache\com.unity.rendering.light-transport\package.json" />
+    <None Include="Library\PackageCache\com.unity.shadergraph\package.json" />
+    <None Include="Library\PackageCache\com.unity.modules.unityanalytics\package.json" />
+    <None Include="Packages\com.unity.ide.rider\package.json" />
+    <None Include="Library\PackageCache\com.unity.searcher\package.json" />
+    <None Include="Library\PackageCache\com.unity.modules.video\package.json" />
+    <None Include="Library\PackageCache\com.unity.shadergraph\ValidationConfig.json" />
+    <None Include="Library\PackageCache\com.unity.test-framework\package.json" />
+    <None Include="Library\PackageCache\com.unity.nuget.mono-cecil\package.json" />
+    <None Include="Library\PackageCache\com.unity.sharp-zip-lib\package.json" />
+    <None Include="Library\PackageCache\com.unity.modules.particlesystem\package.json" />
+    <None Include="Library\PackageCache\com.unity.modules.physics2d\package.json" />
+    <None Include="Library\PackageCache\com.unity.ide.visualstudio\ValidationExceptions.json" />
+    <None Include="Library\PackageCache\com.unity.nuget.newtonsoft-json\link.xml" />
+    <None Include="Library\PackageCache\com.unity.modules.wind\package.json" />
+    <None Include="Library\PackageCache\com.unity.modules.umbra\package.json" />
+    <None Include="Library\PackageCache\com.unity.nuget.newtonsoft-json\package.json" />
+    <None Include="Library\PackageCache\com.unity.modules.audio\package.json" />
+    <None Include="Library\PackageCache\com.unity.modules.physics\package.json" />
+    <None Include="Library\PackageCache\com.unity.render-pipelines.universal\ValidationExceptions.json" />
+    <None Include="Library\PackageCache\com.unity.modules.vehicles\package.json" />
+    <None Include="Library\PackageCache\com.unity.modules.unitywebrequestwww\package.json" />
+    <None Include="Library\PackageCache\com.unity.modules.unitywebrequestaudio\package.json" />
+    <None Include="Library\PackageCache\com.unity.modules.hierarchycore\package.json" />
+    <None Include="Library\PackageCache\com.unity.ugui\Editor Resources\Shaders\TMP_SDF_SSD.cginc" />
+    <None Include="Library\PackageCache\com.unity.ai.navigation\package.json" />
+    <None Include="Library\PackageCache\com.unity.ugui\Editor Resources\Shaders\TMP_Properties.cginc" />
+    <None Include="Library\PackageCache\com.unity.nuget.newtonsoft-json\Runtime\AOT\Newtonsoft.Json.xml" />
+    <None Include="Assets\link.xml" />
+    <None Include="Library\PackageCache\com.unity.ugui\Editor Resources\Shaders\TMP_SDF Internal Editor.shader" />
+    <None Include="Packages\com.etetet.init\package.json" />
+    <None Include="Library\PackageCache\com.unity.modules.director\package.json" />
+    <None Include="Library\PackageCache\com.unity.modules.terrain\package.json" />
+    <None Include="Library\PackageCache\com.unity.collections\package.json" />
+    <None Include="Library\PackageCache\com.unity.modules.androidjni\package.json" />
+    <None Include="Library\PackageCache\com.unity.ugui\PackageConversionData_Assets.json" />
+    <None Include="Library\PackageCache\com.unity.mathematics\ValidationExceptions.json" />
+    <None Include="Library\PackageCache\com.unity.modules.animation\package.json" />
+    <None Include="Library\PackageCache\com.unity.nuget.newtonsoft-json\Runtime\Newtonsoft.Json.xml" />
+    <None Include="Library\PackageCache\com.unity.collections\ValidationExceptions.json" />
+    <None Include="Library\PackageCache\com.unity.burst\Unity.Burst.Unsafe.xml" />
+    <None Include="Library\PackageCache\com.unity.render-pipelines.universal\ValidationConfig.json" />
+    <None Include="Library\PackageCache\com.unity.modules.unitywebrequest\package.json" />
+    <None Include="Library\PackageCache\com.unity.modules.uielements\package.json" />
+    <None Include="Library\PackageCache\com.unity.modules.ui\package.json" />
+    <None Include="Library\PackageCache\com.unity.multiplayer.center\package.json" />
+    <Reference Include="UnityEngine">
+      <HintPath>M:\unity\6000.0.25f1\Editor\Data\Managed\UnityEngine\UnityEngine.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityEngine.CoreModule">
+      <HintPath>M:\unity\6000.0.25f1\Editor\Data\Managed\UnityEngine\UnityEngine.CoreModule.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityEditor">
+      <HintPath>M:\unity\6000.0.25f1\Editor\Data\Managed\UnityEngine\UnityEditor.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it.
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>
