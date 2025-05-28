@@ -421,7 +421,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   icon: {fileID: 1319697557577697983}
-  countText: {fileID: 1479812894464093004}
+  nameText: {fileID: 1479812894464093004}
   highlightFrame: {fileID: 7312677650610315715}
   onClick:
     m_PersistentCalls:

@@ -52,6 +52,10 @@ public class PlayerController : MonoBehaviour
             anim.Play("Idle");    // 切回 Idle
             isWalking = false;
         }
+        if (input.x > 0.01f)
+            transform.localScale = new Vector3(8.5f, 8.5f, 8.5f);
+        else if (input.x < -0.01f)
+            transform.localScale = new Vector3(-8.5f, 8.5f, 8.5f);
     }
 
     private void FixedUpdate()
