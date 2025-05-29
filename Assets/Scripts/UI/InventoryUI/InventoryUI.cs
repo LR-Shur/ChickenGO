@@ -1,133 +1,146 @@
+// InventoryUI.cs
+using System;
+using System.Collections.Generic;
+using System.Linq;
 using Inventory;
 using TMPro;
-
-namespace UI
-{
-    using System;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class InventoryUI : BaseUI
+namespace UI
 {
-    [Header("槽位列表")]
-    public List<InventorySlot> slots;
-
-    [Header("操作面板")]
-    public GameObject actionPanel;     // 弹出面板（包含 Use、Discard 按钮）
-    public Button useButton;
-    public Button discardButton;
-
-    private InventoryHandle invHandle;
-    private int    selectedItemId;
-    private InventorySlot selectedSlot;
-
-    private void Awake()
+    public class InventoryUI : BaseUI
     {
-        invHandle = FindObjectOfType<InventoryHandle>();
-        actionPanel.SetActive(false);
+        [Header("槽位列表，索引对应 InventoryHandle 的 key")]
+        public List<InventorySlot> slots;
 
-        // 给每个槽位订阅点击事件
-        foreach (var slot in slots)
-            slot.onClick.AddListener(OnSlotClicked);
-        Refresh(invHandle.GetAllItems());
-    }
+        [Header("操作面板")]
+        public GameObject actionPanel;
+        public Button useButton;
+        public Button discardButton;
 
-    private void OnEnable()
-    {
-        invHandle.OnInventoryChanged += Refresh;
-    }
-    private void OnDisable()
-    {
-        invHandle.OnInventoryChanged -= Refresh;
-    }
+        [Header("提示面板")]
+        public RectTransform tooltipPanel;
+        public TextMeshProUGUI tooltipDescText;
+        public Vector2 tooltipOffset = new Vector2(0, 30);
 
-    private void Refresh(Dictionary<int, ItemInstance> items)
-    {
-        // 清空所有
-        foreach (var slot in slots)
-            slot.Clear();
+        private InventoryHandle invHandle;
+        private int selectedSlotIndex = -1;
+        private InventorySlot selectedSlot;
 
-        // 填充
-        int idx=0;
-        foreach (var kv in items)
+        private void Awake()
         {
-            if (idx >= slots.Count) break;
-            var inst = kv.Value;
-            slots[idx].Setup(inst.Def.icon, inst.Def.displayName);
-            idx++; 
+            invHandle = FindObjectOfType<InventoryHandle>();
+            actionPanel.SetActive(false);
+            tooltipPanel.gameObject.SetActive(false);
+
+            foreach (var slot in slots)
+            {
+                slot.onClick.AddListener(OnSlotClicked);
+                slot.onHoverEnter += OnSlotHoverEnter;
+                slot.onHoverExit += OnSlotHoverExit;
+            }
+
+            // 首次填充
+            Refresh(invHandle.GetAllItems());
         }
 
-        // 关闭操作面板
-        actionPanel.SetActive(false);
-    }
-
-    private void OnSlotClicked(InventorySlot slot)
-    {
-        // 如果点的是当前已选槽，则取消高亮并收起面板
-        if (selectedSlot == slot)
+        private void OnEnable()
         {
-            slot.Unhighlight();
-            selectedSlot = null;
-            CloseActionPanel();
-            return;
+            invHandle.OnInventoryChanged += Refresh;
         }
-        
-        
-        // 取消上次高亮
-        selectedSlot?.Unhighlight();
-        // 高亮当前
-        slot.Highlight();
-        selectedSlot = slot;
 
-        // 获取对应的 ItemInstance
-        int index = slots.IndexOf(slot);
-        var itemsList = invHandle.GetAllItems(); // 假设返回按插入顺序的 List<ItemInstance>
-        if (index < 0 || index >= itemsList.Count)
-            return;
+        private void OnDisable()
+        {
+            invHandle.OnInventoryChanged -= Refresh;
+        }
 
-        var inst = itemsList[index];
-        selectedItemId = inst.Def.itemId;
+        // itemsBySlot: key = 槽位索引，value = 对应的 ItemInstance
+        private void Refresh(Dictionary<int, ItemInstance> itemsBySlot)
+        {
+            // 按 slots 列表索引，填或清
+            for (int i = 0; i < slots.Count; i++)
+            {
+                if (itemsBySlot.TryGetValue(i, out var inst))
+                    slots[i].Setup(inst);
+                else
+                    slots[i].Clear();
+            }
 
-        // 显示操作面板，并根据 activeBuffs 决定 Use 按钮显隐
-        actionPanel.SetActive(true);
-        useButton.gameObject.SetActive(inst.Def.hasActive);
-        discardButton.gameObject.SetActive(true);
+            // 收起面板
+            selectedSlotIndex = -1;
+            actionPanel.SetActive(false);
+            tooltipPanel.gameObject.SetActive(false);
+        }
 
-        // 绑定按钮回调
-        useButton.onClick.RemoveAllListeners();
-        useButton.onClick.AddListener(OnUseClicked);
-        discardButton.onClick.RemoveAllListeners();
-        discardButton.onClick.AddListener(OnDiscardClicked);
+        private void OnSlotClicked(InventorySlot slot)
+        {
+            int idx = slots.IndexOf(slot);
+            if (idx < 0) return;
 
-        // 把面板放到槽位旁边（可选，根据需求调整 RectTransform）
-        //actionPanel.transform.position = slot.transform.position + Vector3.up * 30;
+            // 点击同格子则取消
+            if (selectedSlotIndex == idx)
+            {
+                slot.Unhighlight();
+                selectedSlotIndex = -1;
+                actionPanel.SetActive(false);
+                return;
+            }
+
+            // 切换高亮
+            selectedSlot?.Unhighlight();
+            slot.Highlight();
+            selectedSlot = slot;
+            selectedSlotIndex = idx;
+
+            // 确保该格有物品
+            if (slot.item == null)
+            {
+                actionPanel.SetActive(false);
+                return;
+            }
+
+            // 显示操作面板
+            actionPanel.SetActive(true);
+            useButton.gameObject.SetActive(slot.item.Def.canUse);
+            discardButton.gameObject.SetActive(true);
+
+            useButton.onClick.RemoveAllListeners();
+            useButton.onClick.AddListener(OnUseClicked);
+            discardButton.onClick.RemoveAllListeners();
+            discardButton.onClick.AddListener(OnDiscardClicked);
+        }
+
+        private void OnUseClicked()
+        {
+            invHandle.UseSlot(selectedSlotIndex);
+            actionPanel.SetActive(false);
+        }
+
+        private void OnDiscardClicked()
+        {
+            invHandle.RemoveSlot(selectedSlotIndex);
+            actionPanel.SetActive(false);
+        }
+
+        private void OnSlotHoverEnter(InventorySlot slot)
+        {
+            int idx = slots.IndexOf(slot);
+            if (idx < 0) return;
+            var itemsBySlot = invHandle.GetAllItems();
+            if (!itemsBySlot.TryGetValue(idx, out var inst)) return;
+
+            tooltipDescText.text = inst.Def.description;
+
+            // 面板移到格子上方一点
+            var slotRect = slot.GetComponent<RectTransform>();
+            tooltipPanel.anchoredPosition = slotRect.anchoredPosition + tooltipOffset;
+            tooltipPanel.gameObject.SetActive(true);
+        }
+
+        private void OnSlotHoverExit(InventorySlot slot)
+        {
+            tooltipPanel.gameObject.SetActive(false);
+        }
     }
-
-    private void OnUseClicked()
-    {
-        invHandle.Use(selectedItemId);
-        CloseActionPanel();
-    }
-
-    private void OnDiscardClicked()
-    {
-        invHandle.RemoveCompletely(selectedItemId); // 需要在 InventoryHandle 提供此方法
-        CloseActionPanel();
-    }
-
-    private void CloseActionPanel()
-    {
-        selectedSlot?.Unhighlight();
-        actionPanel.SetActive(false);
-    }
-
-    public override void Show()
-    {
-        base.Show();
-        
-    }
-}
-
-
 }

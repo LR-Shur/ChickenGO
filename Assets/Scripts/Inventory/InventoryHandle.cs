@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Buff;
-using UI;
 using UnityEngine;
 using UnityEngine.AddressableAssets;
 
@@ -11,81 +10,117 @@ namespace Inventory
     [RequireComponent(typeof(BuffHandle))]
     public class InventoryHandle : MonoBehaviour
     {
-        public int maxSlots = 5;
+        public int maxSlots = 20;
         private BuffHandle buffHandle;
-        private Dictionary<int, ItemInstance> items = new();
-        public event Action<Dictionary<int,ItemInstance>> OnInventoryChanged;
+        // key = 槽位索引 (0..maxSlots-1)，value = 该槽位里的 ItemInstance
+        public Dictionary<int, ItemInstance> items = new Dictionary<int, ItemInstance>();
+
+        // 每个 ItemInstance & 它的被动 buffs
+        private Dictionary<ItemInstance, List<BuffInstance>> passiveBuffMap
+            = new Dictionary<ItemInstance, List<BuffInstance>>();
+
+        public event Action<Dictionary<int, ItemInstance>> OnInventoryChanged;
 
         void Awake()
         {
             buffHandle = GetComponent<BuffHandle>();
         }
 
-        /// <summary> 拾取道具 </summary>
+        /// <summary> 拾取道具：叠满格子后自动开新格 </summary>
         public void Pickup(ItemInfo info)
         {
-            // 1. 通过 Addressables 异步加载 Definition
-            Addressables.LoadAssetAsync<ItemDefinition>($"Item/{info.itemId}").Completed += handle =>
-            {
-                var def = handle.Result;
+            var def = ItemDefinitionManager.Instance.Get(info.itemId);
                 if (def == null) return;
 
-                // 2. 如果已存在，叠加数量；否则新建实例
-                if (items.TryGetValue(def.itemId, out var inst))
+                int toAdd = info.count;
+                int maxStack = Mathf.Max(1, def.maxStack);
+
+                // 1. 先往已有同类型且未满的槽位里填
+                foreach (var kv in items.OrderBy(kv => kv.Key))
                 {
-                    inst.AddCount(info.count);
-                }
-                else
-                {
-                    inst = new ItemInstance(def, info.count);
-                    items[def.itemId] = inst;
+                    var slot    = kv.Key;
+                    var inst    = kv.Value;
+                    if (inst.Def.itemId != def.itemId) continue;
+                    int space   = maxStack - inst.count;
+                    if (space <= 0) continue;
+                    int delta   = Mathf.Min(space, toAdd);
+                    inst.AddCount(delta);
+                    toAdd -= delta;
+                    if (toAdd <= 0) break;
                 }
 
-                // 3. 如果有被动效果，逐条注册到 BuffHandle
-                if (def.hasPassive)
-                    foreach (var bi in def.passiveBuffs)
-                        buffHandle.Add(bi);
+                // 2. 如果还有剩余，就分批找空槽开新格
+                while (toAdd > 0 && items.Count < maxSlots)
+                {
+                    int delta = Mathf.Min(maxStack, toAdd);
+                    var inst  = new ItemInstance(def, delta);
+                    toAdd    -= delta;
 
-                // 4. 更新 UI（图标/数量）
-                OnInventoryChanged?.Invoke(items);
-            };
+                    // 找一个最小的空位 key
+                    int slotKey = Enumerable.Range(0, maxSlots)
+                                            .First(i => !items.ContainsKey(i));
+                    items[slotKey] = inst;
+
+                    // 如果有被动 Buff，记下来
+                    if (def.hasPassive)
+                    {
+                        var buffs = new List<BuffInstance>();
+                        foreach (var entry in def.passiveBuffs)
+                        {
+                            var b = buffHandle.Add(
+                                new BuffInfo(entry.definition.buffId, entry.stacks)
+                            );
+                            if (b != null) buffs.Add(b);
+                        }
+                        passiveBuffMap[inst] = buffs;
+                    }
+                }
+
+                // 3. 如果 toAdd>0，说明背包已满，可在这里提示玩家
+                if (toAdd > 0)
+                    Debug.LogWarning("背包已满，溢出部分已丢弃");
+
+                OnInventoryChanged?.Invoke(new Dictionary<int, ItemInstance>(items));
+            
         }
 
-        /// <summary> 使用道具 </summary>
-        public void Use(int itemId)
+        /// <summary> 使用槽位上的道具（传入槽位索引）</summary>
+        public void UseSlot(int slot)
         {
-            if (!items.TryGetValue(itemId, out var inst) || inst.count == 0) return;
-
+            if (!items.TryGetValue(slot, out var inst)) return;
             var def = inst.Def;
-            if (def.hasActive)
-            {
-                // 触发所有主动 Buff
-                foreach (var bi in def.activeBuffs)
-                    buffHandle.Add(bi);
-            }
+            if (!def.canUse) return;
+
+            // 应用主动 Buff
+            foreach (var entry in def.activeBuffs)
+                buffHandle.Add(new BuffInfo(entry.definition.buffId, entry.stacks));
 
             if (def.isConsumable)
             {
                 inst.AddCount(-1);
                 if (inst.count <= 0)
-                    items.Remove(itemId);
+                    RemoveSlot(slot);
             }
 
-            OnInventoryChanged?.Invoke(items);
+            OnInventoryChanged?.Invoke(new Dictionary<int, ItemInstance>(items));
         }
 
-        public List<ItemInstance> GetAllItemsList() => items.Values.ToList();
-        public Dictionary<int, ItemInstance> GetAllItems() => items;
-
-        
-        //丢弃物品
-        public void RemoveCompletely(int itemId)
+        /// <summary> 丢弃整个槽位（连带被动 Buff） </summary>
+        public void RemoveSlot(int slot)
         {
-            if (items.Remove(itemId))
-                OnInventoryChanged?.Invoke(items);
+            if (!items.TryGetValue(slot, out var inst)) return;
+            // 1. 清除被动 Buff
+            if (passiveBuffMap.TryGetValue(inst, out var buffs))
+            {
+                foreach (var b in buffs)
+                    buffHandle.Remove(b);
+                passiveBuffMap.Remove(inst);
+            }
+            // 2. 清空槽位
+            items.Remove(slot);
+            OnInventoryChanged?.Invoke(new Dictionary<int, ItemInstance>(items));
         }
-
         
+        public Dictionary<int, ItemInstance> GetAllItems() => items;
     }
-
 }

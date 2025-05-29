@@ -6,13 +6,16 @@ namespace Buff
     public abstract class BuffBehavior : ScriptableObject
     {
         // Buff 新增
-        public abstract void OnApply(GameObject target,int layer);
+        public virtual void OnApply(GameObject target, int layer)
+        {
+            
+        }
         
         // Buff 进行时，每帧调用（可选）
-        public abstract void OnTick(GameObject target,int layer, float deltaTime);
+        public virtual void OnTick(GameObject target,int layer, float deltaTime){}
         
         // Buff 结束时调用
-        public abstract void OnExpire(GameObject target);
+        public virtual void OnExpire(GameObject target){}
     }
 
 

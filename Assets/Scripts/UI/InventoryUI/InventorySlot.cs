@@ -1,62 +1,62 @@
+// InventorySlot.cs
+using UnityEngine;
+using UnityEngine.Events;
+using UnityEngine.UI;
+using TMPro;
+using System;
+using Inventory;
+using UnityEngine.EventSystems;
+
 namespace UI
 {
-    using UnityEngine;
-    using UnityEngine.UI;
-    using UnityEngine.Events;
-    using TMPro;
-
     [RequireComponent(typeof(Button))]
-    public class InventorySlot : MonoBehaviour
+    public class InventorySlot : MonoBehaviour,IPointerEnterHandler, IPointerExitHandler
     {
         [Header("UI 引用")]
-        public Image icon;                 // 道具图标
-        public TextMeshProUGUI nameText;         // 数量文本
-        public Image highlightFrame;       // 高亮边框
+        public Image icon;                 
+        public TextMeshProUGUI nameText;   
+        public Image highlightFrame;       
 
-        // 点击回调：参数是本 Slot
+        // 当前格子的物品实例
+        [HideInInspector] public ItemInstance item;
+
+        // 点击 & 悬浮事件
         public UnityEvent<InventorySlot> onClick;
+        public event Action<InventorySlot> onHoverEnter;
+        public event Action<InventorySlot> onHoverExit;
 
         private Button button;
 
         private void Awake()
         {
             button = GetComponent<Button>();
-            button.onClick.AddListener(NotifyClick);
+            button.onClick.AddListener(() => onClick?.Invoke(this));
             highlightFrame.gameObject.SetActive(false);
         }
 
-        private void NotifyClick()
+        public void Setup(ItemInstance inst)
         {
-            onClick?.Invoke(this);
+            item = inst;
+            icon.sprite = inst.Def.icon;
+            icon.enabled = true;
+            nameText.text = inst.Def.displayName.ToString();
         }
 
-        /// <summary> 初始化槽位显示 </summary>
-        public void Setup(Sprite sprite, string name)
-        {
-            icon.sprite      = sprite;
-            icon.enabled     = true;
-            nameText.text   = name.ToString();
-        }
-
-        /// <summary> 清空槽位 </summary>
         public void Clear()
         {
-            icon.enabled       = false;
-            nameText.text     = "";
+            item = null;
+            icon.enabled = false;
+            nameText.text = "";
             Unhighlight();
         }
 
-        /// <summary> 高亮显示 </summary>
-        public void Highlight()
-        {
-            highlightFrame.gameObject.SetActive(true);
-        }
+        public void Highlight()   => highlightFrame.gameObject.SetActive(true);
+        public void Unhighlight() => highlightFrame.gameObject.SetActive(false);
 
-        /// <summary> 取消高亮 </summary>
-        public void Unhighlight()
-        {
-            highlightFrame.gameObject.SetActive(false);
-        }
+        // 悬浮回调
+        public void OnPointerEnter(PointerEventData e)
+            => onHoverEnter?.Invoke(this);
+        public void OnPointerExit(PointerEventData e)
+            => onHoverExit?.Invoke(this);
     }
-
 }

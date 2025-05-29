@@ -19,9 +19,9 @@ namespace Buff
     // 2. BuffInfo：调用封装
     public struct BuffInfo
     {
-        public string buffId;
+        public int buffId;
         public int stacks;
-        public BuffInfo(string id, int count = 1)
+        public BuffInfo(int id, int count = 1)
         {
             buffId = id;
             stacks = count;

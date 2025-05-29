@@ -1,3 +1,4 @@
+using System;
 using Buff;
 using UnityEngine;
 
@@ -8,16 +9,37 @@ public struct ItemInfo
     public ItemInfo(int id, int cnt=1) { itemId = id; count = cnt; }
 }
 
+[Serializable]
+public class BuffEntry
+{
+    [Tooltip("要应用的 BuffDefinition")]
+    public BuffDefinition definition;
+    
+    [Tooltip("初始层数")]
+    public int stacks = 1;
+}
+
 [CreateAssetMenu(menuName = "Item/Definition")]
 public class ItemDefinition : ScriptableObject
 {
     public int        itemId;           // 唯一整数ID
     public string     displayName;      
-    public Sprite     icon;             
-    public bool       isConsumable;     // 是否一次性使用
-    public bool       hasPassive;       // 放入背包即生效
-    public bool       hasActive;        // 手动使用时生效
-    public BuffInfo[] passiveBuffs;     // 放入背包后自动添加的 BuffInfo 列表
-    public BuffInfo[] activeBuffs;      // 使用时触发的 BuffInfo 列表
+    public string     description;
+    public Sprite     icon;        
+    
+    [Header("最大堆叠数量（>1 则可堆叠，否则每件单独占格）")]
+    public int maxStack = 1;   
+    
+    [Header("是不是一次性的")]
+    public bool       isConsumable = true;     // 是否一次性使用
+    [Header("放到背包是不是有被动效果")]
+    public bool       hasPassive=false;       // 放入背包即生效
+    [Header("是否是主动道具")]
+    public bool  canUse       = true;    // 是否能点击 Use
+    [Header("被动 Buff（放包时生效）")]
+    public BuffEntry[] passiveBuffs;
+
+    [Header("主动 Buff（Use 时生效）")]
+    public BuffEntry[] activeBuffs;
     
 }

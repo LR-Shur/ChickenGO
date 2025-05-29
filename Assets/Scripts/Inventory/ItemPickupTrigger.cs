@@ -1,4 +1,5 @@
 using Inventory;
+using Player;
 using UnityEngine;
 using UnityEngine.AddressableAssets;
 
@@ -10,10 +11,14 @@ public class ItemPickupTrigger : MonoBehaviour
     [Header("拾取数量")]
     public int count = 1;
 
+    private SpriteRenderer spriteRenderer;
+    
     private void Awake()
     {
         // 必须勾选 Is Trigger
         GetComponent<Collider2D>().isTrigger = true;
+        spriteRenderer = GetComponent<SpriteRenderer>();
+        spriteRenderer.sprite = ItemDefinitionManager.Instance.Get(itemId).icon;
     }
 
     private void OnTriggerEnter2D(Collider2D other)
@@ -24,6 +29,11 @@ public class ItemPickupTrigger : MonoBehaviour
 
         // 拾取：调用 InventoryHandle
         var inv = player.GetComponent<InventoryHandle>();
+
+        if (inv.items.Count >= inv.maxSlots) {
+            return;
+        }
+        
         if (inv != null)
         {
             inv.Pickup(new ItemInfo(itemId, count));

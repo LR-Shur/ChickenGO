@@ -9,12 +9,8 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e3216302aab94fa7a99f963b741d62e3, type: 3}
-  m_Name: New Item Definition
+  m_Script: {fileID: 11500000, guid: 5834b5087d578d24c926ce20cd31e6d6, type: 3}
+  m_Name: Buff_ContentUpdateGroupSchema
   m_EditorClassIdentifier: 
-  itemId: 0
-  displayName: 
-  icon: {fileID: 0}
-  isConsumable: 0
-  hasPassive: 0
-  hasActive: 0
+  m_Group: {fileID: 11400000, guid: 46ef13184e90afa4bab3478c7d84f0fb, type: 2}
+  m_StaticContent: 0
