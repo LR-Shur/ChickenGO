@@ -36,15 +36,5 @@ namespace Inventory
         }
     }
 
-    /// <summary>
-    /// 用于 Inspector 中配置一个 BuffDefinition + 初始层数
-    /// </summary>
-    [System.Serializable]
-    public struct BuffEntry
-    {
-        [Tooltip("要触发的 BuffDefinition 资产")]
-        public BuffDefinition definition;
-        [Tooltip("触发时的初始层数")]
-        public int stacks;
-    }
+    
 }

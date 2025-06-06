@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Inventory;
 using Player;
 using UnityEngine;
 using UnityEngine.AddressableAssets;
@@ -12,7 +13,24 @@ namespace Buff
     public class BuffHandle : MonoBehaviour
     {
         private Dictionary<int, BuffInstance> buffs = new Dictionary<int, BuffInstance>();
+        private InventoryHandle inventoryHandle;
 
+        private void OnEnable()
+        {
+            inventoryHandle = GetComponent<InventoryHandle>();
+            
+            // 订阅“物品使用”事件
+            inventoryHandle.OnItemUsed += HandleItemUsed;
+            inventoryHandle.OnItemPickedUp += HandleItemPickedUp;
+        }
+
+        private void OnDisable()
+        {
+            inventoryHandle.OnItemUsed -= HandleItemUsed;
+            inventoryHandle.OnItemPickedUp -= HandleItemPickedUp;
+        }
+        
+        
         void Update()
         {
             float dt = Time.deltaTime;
@@ -108,5 +126,26 @@ namespace Buff
 
             return inst;
         }
+        
+        //物品使用时触发，添加buff
+        private void HandleItemUsed(int slot, ItemInstance inst)
+        {
+            var def = inst.Def;
+            // 只有在物品可用时才来了这里，所以可以直接加
+            foreach (var entry in def.activeBuffs)
+            {
+                Add(new BuffInfo(entry.definition.buffId, entry.stacks));
+            }
+        }
+        
+        //物品拾取时触发，添加被动buff
+        private void HandleItemPickedUp(ItemDefinition def, int addedCount )
+        {
+            if (!def.hasPassive) return;
+            foreach (var entry in def.passiveBuffs)
+                for (int i = 0; i < addedCount; i++)
+                    this.Add(new BuffInfo(entry.definition.buffId, entry.stacks));
+        }
+        
     }
 }

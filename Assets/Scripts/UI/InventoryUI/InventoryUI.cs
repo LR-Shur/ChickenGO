@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Fight;
 using Inventory;
 using TMPro;
 using UnityEngine;
@@ -23,14 +24,19 @@ namespace UI
         public RectTransform tooltipPanel;
         public TextMeshProUGUI tooltipDescText;
         public Vector2 tooltipOffset = new Vector2(0, 30);
-
+        
+        
+        private WeaponCombatController combatCtrl; 
         private InventoryHandle invHandle;
         private int selectedSlotIndex = -1;
         private InventorySlot selectedSlot;
 
         private void Awake()
         {
+            //TODO
+            //先直接查找了，多人肯定不能这么干
             invHandle = FindObjectOfType<InventoryHandle>();
+            combatCtrl = FindObjectOfType<WeaponCombatController>();
             actionPanel.SetActive(false);
             tooltipPanel.gameObject.SetActive(false);
 
@@ -43,6 +49,8 @@ namespace UI
 
             // 首次填充
             Refresh(invHandle.GetAllItems());
+            
+            
         }
 
         private void OnEnable()
@@ -77,10 +85,21 @@ namespace UI
         {
             int idx = slots.IndexOf(slot);
             if (idx < 0) return;
+            
+            
+            
 
             // 点击同格子则取消
             if (selectedSlotIndex == idx)
             {
+                
+                //如果装备了武器则卸下
+                if (slot.item != null && slot.item.Def.isWeapon)
+                {
+                    // 调用卸下武器
+                    combatCtrl.EquipWeapon(null);
+                }
+                
                 slot.Unhighlight();
                 selectedSlotIndex = -1;
                 actionPanel.SetActive(false);
@@ -99,6 +118,15 @@ namespace UI
                 actionPanel.SetActive(false);
                 return;
             }
+            
+            
+            // 如果这是个武器，就切换到武器战斗控制器
+            if (slot.item.Def.isWeapon)
+            {
+                combatCtrl.EquipWeapon(slot.item);
+                return;
+            }
+            
 
             // 显示操作面板
             actionPanel.SetActive(true);

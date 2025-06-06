@@ -1,5 +1,6 @@
 using System;
 using Buff;
+using Fight;
 using UnityEngine;
 
 public struct ItemInfo
@@ -27,6 +28,8 @@ public class ItemDefinition : ScriptableObject
     public string     description;
     public Sprite     icon;        
     
+    
+    
     [Header("最大堆叠数量（>1 则可堆叠，否则每件单独占格）")]
     public int maxStack = 1;   
     
@@ -41,5 +44,9 @@ public class ItemDefinition : ScriptableObject
 
     [Header("主动 Buff（Use 时生效）")]
     public BuffEntry[] activeBuffs;
+    
+    [Header("武器类型 (默认 None,即常规物品)")]
+    public bool isWeapon = false;
+    
     
 }

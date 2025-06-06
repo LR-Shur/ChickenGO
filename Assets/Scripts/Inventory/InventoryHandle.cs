@@ -12,13 +12,21 @@ namespace Inventory
     {
         public int maxSlots = 20;
         private BuffHandle buffHandle;
-        // key = 槽位索引 (0..maxSlots-1)，value = 该槽位里的 ItemInstance
+        
+        //物品列表
         public Dictionary<int, ItemInstance> items = new Dictionary<int, ItemInstance>();
 
         // 每个 ItemInstance & 它的被动 buffs
         private Dictionary<ItemInstance, List<BuffInstance>> passiveBuffMap
             = new Dictionary<ItemInstance, List<BuffInstance>>();
+        
+        // 物品拾取事件
+        public event Action<ItemDefinition, int> OnItemPickedUp;
+        
+        //物品使用事件
+        public event Action<int, ItemInstance> OnItemUsed;
 
+        //库存变化事件
         public event Action<Dictionary<int, ItemInstance>> OnInventoryChanged;
 
         void Awake()
@@ -45,6 +53,7 @@ namespace Inventory
                     if (space <= 0) continue;
                     int delta   = Mathf.Min(space, toAdd);
                     inst.AddCount(delta);
+                    OnItemPickedUp?.Invoke(def, delta); //拾取物品事件触发
                     toAdd -= delta;
                     if (toAdd <= 0) break;
                 }
@@ -91,9 +100,7 @@ namespace Inventory
             var def = inst.Def;
             if (!def.canUse) return;
 
-            // 应用主动 Buff
-            foreach (var entry in def.activeBuffs)
-                buffHandle.Add(new BuffInfo(entry.definition.buffId, entry.stacks));
+            OnItemUsed?.Invoke(slot, inst);
 
             if (def.isConsumable)
             {

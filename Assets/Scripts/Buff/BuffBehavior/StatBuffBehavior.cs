@@ -75,7 +75,7 @@ public class StatBuffBehavior : BuffBehavior
 
     public override void OnExpire(GameObject target)
     {
-        var stats = target.GetComponent<PlayerStats>();
+        var stats = target.GetComponent<CharacterStatsBase>();
         if (stats == null) return;
 
         // 过期时移除刚才加的那段 influenceValue
